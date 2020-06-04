@@ -13,6 +13,6 @@ exports.createCate = async (req, res) => {
 };
 
 exports.readCate = async (req, res) => {
-    const Cate = await Cate.find();
-    return res.status(200).json({ status: "ok", data: Cate})
+    const cate = await Cate.find();
+    return res.status(200).json({ status: "ok", data: cate})
 }

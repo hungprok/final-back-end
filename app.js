@@ -2,72 +2,79 @@ const express = require('express');
 require('dotenv').config();
 const mongoose = require('mongoose');
 const bodyParser = require("body-parser");
-const TourGuide = require('./src/models/TourGuide.js');
-const {createTourGuide, updateTourGuide, deleteTourGuide, readTourGuide} = require('./src/controllers/TourGuideController');
-const {createCate, updateCate, deleteCate, readCate} = require('./src/controllers/CateController');
-const {createTour, readTour, updateTour} = require('./src/controllers/TourController');
-const {createUser} = require('./src/controllers/userController');
-const {Login, auth} = require('./src/controllers/authenticationController');
-const {Logout, LogoutAll} = require('./src/controllers/logoutController');
-const {createReview, readReview} = require('./src/controllers/reviewController');
-const {checkTour} = require('./src/middleware/checkTour');
+const passport = require("./src/auth/passport");
+const cors = require('cors');
+
+const { Login, auth, loginFacebook, authFacebook, authGithub, loginGithub } = require('./src/controllers/authenticationController');
+const { Logout, LogoutAll } = require('./src/controllers/logoutController');
 
 mongoose.connect(process.env.DB_LOCAL, {
     useCreateIndex: true,
-    useNewURLParser: true,
-    useFindandModify: false,
+    useNewUrlParser: true,
+    useFindAndModify: false,
     useUnifiedTopology: true
 }).then(() => console.log("Connected to database")).catch((err) => console.log(err));
 
 const app = express();
 const router = express.Router();
 
-
+app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json());
 app.use(router);
+app.use(passport.initialize())
 
+const tourRouter = require('./src/routers/tourRouter');
+router.use('/tours', tourRouter);
 
-// router.get('/', (req, res) => {
-//     res.status(200).json({ status: "ok", data: [] })
-// })
+const tourguideRouter = require('./src/routers/tourguideRouter');
+router.use('/tourguides', tourguideRouter);
 
-router.route('/TourGuides')
-.post(createTourGuide )
-.put(updateTourGuide)
-.get(readTourGuide)
-.delete(deleteTourGuide);
+const reviewRouter = require('./src/routers/reviewRouter');
+router.use('/reviews', reviewRouter);
 
-router.route('/Cates')
-.post(createCate)
-// .put(updateCate)
-.get(readCate)
-// .delete(deleteCate)
+const userRouter = require('./src/routers/userRouter');
+router.use('/users', userRouter);
 
-// router.post('/TourGuides',createTourGuide )
+const cateRouter = require('./src/routers/cateRouter');
+router.use('/cates', cateRouter);
 
-router.route('/Tours')
-.post(auth, createTour)
-.put(auth, updateTour)
-.get(auth, readTour)
-// .delete(deleteTourGuide);
+const bookingRouter = require('./src/routers/bookingRouter');
+router.use('/booking', bookingRouter);
 
-router.route('/users')
-.post(createUser)
+router.route('/auth/facebook')
+    .get(loginFacebook)
+router.route('/auth/facebook/authorized')
+    .get(authFacebook)
 
-router.route('/reviews')
-.post(auth, checkTour, createReview)
-.get(auth, checkTour, readReview)
+router.route('/auth/github')
+    .get(loginGithub)
+router.route('/auth/github/authorized')
+    .get(authGithub)
 
 router.route('/login')
-.post(Login)
+    .post(Login)
 
 router.route('/logout')
-.get(auth, Logout)
+    .get(auth, Logout)
 
-router.route('/logoutAll')
-.get(auth, LogoutAll)
+router.route('/logoutall')
+    .get(auth, LogoutAll)
 
-app.listen(process.env.PORT, () => {
-    console.log("running in port", process.env.PORT)
-})
+// 404 handler
+const AppError = require('./src/utils/AppError');
+
+function notFound(req, res, next) {
+    next(new AppError(404, "URL not found"))
+};
+
+router.route('/')
+    .get((req, res) => { return res.status(200).json({ status: "ok" }) })
+router.route("*").all(notFound);
+
+const { errorController } = require('./src/controllers/errorController')
+app.use(errorController)
+
+
+
+module.exports = app;

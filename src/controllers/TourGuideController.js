@@ -37,5 +37,5 @@ exports.deleteTourGuide = async (req, res) => {
 
 exports.readTourGuide = async (req, res) => {
     const tourGuide = await TourGuide.find();
-    return res.status(200).json({ status: "ok", data: TourGuide})
+    return res.status(200).json({ status: "ok", data: tourGuide})
 }
