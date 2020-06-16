@@ -1,6 +1,4 @@
 const Tour = require('../models/Tour');
-const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
 const { deleteOne } = require('./handlerFactory');
 
 exports.createTour = async (req, res) => {
