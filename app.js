@@ -126,7 +126,7 @@ router.post("/test", upload.single("fileUpload"), async (req, res) => {
 });
 
 // 404 handler
-const AppError = require('./src/utils/appError');
+const AppError = require('./src/utils/AppError');
 
 function notFound(req, res, next) {
     next(new AppError(404, "URL not found"))

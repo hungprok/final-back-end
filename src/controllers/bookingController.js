@@ -1,7 +1,7 @@
 const catchAsync = require('../utils/catchAsync')
 const Booking = require('../models/booking')
 const Tour = require('../models/Tour')
-const AppError = require('../utils/appError')
+const AppError = require('../utils/AppError')
 const stripe = require('stripe')(process.env.STRIPE_SECRET)
 
 exports.createBooking = catchAsync(async (req, res, next) => {
