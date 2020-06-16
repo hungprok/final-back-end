@@ -60,11 +60,11 @@ exports.authFacebook = async (req, res, next) => {
 exports.loginGithub = passport.authenticate('github')
 
 exports.authGithub = async (req, res, next) => {
-  passport.authenticate("github", function(err, user, info) {
+  passport.authenticate("github", function (err, user, info) {
     // if any error during the process, redirect user back to front end login page
     if (err) return res.redirect(process.env.CLIENT_URL_LOGIN);
     // if authentication succeeds, redirect user to successful front end page with a token
-    res.redirect(`http://localhost:3000/main?token=${user.token[user.token.length-1]}`);
+    res.redirect(`http://localhost:3000/main?token=${user.token[user.token.length - 1]}`);
     // return res.send(user);
   })(req, res, next);
 };

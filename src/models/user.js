@@ -26,6 +26,15 @@ const userSchema = mongoose.Schema({
         type: String,
         trim: true
     },
+    type: {
+        type: String,
+        trim: true,
+        default: 'Jobseeker'
+    },
+    phoneNumber: {
+        type: Number,
+        trim: true,
+    },
     token: [String]
 });
 
@@ -41,7 +50,7 @@ userSchema.statics.loginWithCredentials = async (email, password) => {
 userSchema.statics.findOneOrCreate = async ({ name, email }) => {
     let user = await User.findOne({ email });
     if (!user) {
-       user = await User.create({ name, email });
+        user = await User.create({ name, email });
     }
     return user;
 }

@@ -6,7 +6,7 @@ const path = require('path');
 const server = https.createServer({
     key: fs.readFileSync(path.join(__dirname, './server.key')),
     cert: fs.readFileSync(path.join(__dirname, './server.cert'))
-},app)
+}, app)
 
 server.listen(process.env.PORT, () => {
     console.log("running in port", process.env.PORT)

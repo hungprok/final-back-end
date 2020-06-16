@@ -4,42 +4,66 @@ const TourGuide = require('./TourGuide');
 const Booking = require('./booking');
 
 const tourSchema = mongoose.Schema({
-    tourguide: Object,
-    cate: Array,
-    title: {
+    jobTitle: {
         type: String,
-        required: [true, "Title is required."],
+        required: [true, "jobTitle is required."],
         trim: true
+    },
+    salary: {
+        type: Number,
+        required: [true, "salary is required."],
+        trim: true
+    },
+    currency: {
+        type: String,
+        required: [true, "currency is required."],
+        trim: true
+    },
+    category: {
+        type: String,
+        required: [true, "currency is required."],
+        trim: true
+    },
+    companyName: {
+        type: String,
+        required: [true, "companyName is required."],
+        trim: true
+    },
+    address: {
+        type: String,
+        required: [true, "address is required."],
+        trim: true
+    },
+    city: {
+        type: String,
+        required: [true, "city is required."],
+        trim: true
+    },
+    jd: {
+        type: String,
+        required: [true, "Job Description is required."],
+        trim: true
+    },
+    jr: {
+        type: String,
+        required: [true, "Job Requirement is required."],
+        trim: true
+    },
+    benefit: {
+        type: String,
+        trim: true
+    },
+    status: {
+        type: Boolean,
+        required: [true, "Post status is required."],
     },
     owner: {
         type: Object,
-        required: [true, "Book must have an owner"]
+        required: [true, "Post must have an owner"]
     },
-    ratingAverage: {
-        type: Number,
-        default: 0,
-        min: [0, "Rating must be above 0"],
-        max: [5, "Rating must be below 5.0"],
-        set: value => Math.round(value * 10) / 10
-    },
-    ratingQuantity: {
-        type: Number,
-        default: 0
-    },
-    groupSize: {
-        type: Number,
-        required: true,
-        min: 1
-    },
-    availability: {
-        type: Number,
-        min: 0,
-        default: null
-    },
-    price: {
-        type: Number,
-        required: true,
-        min: 0
+    applicants: {
+        type: Array,
+        default: []
     }
 }, {
     timestamps: true,
@@ -47,25 +71,25 @@ const tourSchema = mongoose.Schema({
     toObject: { virtuals: true }
 });
 
-tourSchema.pre('save', async function (next) {
-    if (!this.isModified('groupSize')) {
-        next()
-    }
-    // console.log(this)
-    // this._update.availability = this.groupSize - bookedQuantity
+// tourSchema.pre('save', async function (next) {
+//     if (!this.isModified('groupSize')) {
+//         next()
+//     }
+//     // console.log(this)
+//     // this._update.availability = this.groupSize - bookedQuantity
 
-    if (this.availability < 0) {
-        next(new AppError(400, 'This tour is out of booking number'))
-    }
+//     if (this.availability < 0) {
+//         next(new AppError(400, 'This tour is out of booking number'))
+//     }
 
-    const bookedQuantity = await Booking.countBooking(this._id)
-    // console.log(this)
-    this.availability = this.groupSize - bookedQuantity
-    this.tourguide = await TourGuide.findById(this.tourguide);
-    const cateArray = this.cate.map(async el => await Cate.findById(el))
-    this.cate = await Promise.all(cateArray);
-    next();
-});
+//     const bookedQuantity = await Booking.countBooking(this._id)
+//     // console.log(this)
+//     this.availability = this.groupSize - bookedQuantity
+//     this.tourguide = await TourGuide.findById(this.tourguide);
+//     const cateArray = this.cate.map(async el => await Cate.findById(el))
+//     this.cate = await Promise.all(cateArray);
+//     next();
+// });
 
 tourSchema.virtual('reviews', {
     ref: 'Review',
