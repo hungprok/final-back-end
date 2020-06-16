@@ -1,5 +1,6 @@
 const Tour = require('../models/Tour');
 const { deleteOne } = require('./handlerFactory');
+const AppError = require('../utils/AppError');
 
 exports.createTour = async (req, res) => {
   const { jobTitle, salary, currency, companyName, address, city, jd, jr, benefit, category, status } = req.body;
